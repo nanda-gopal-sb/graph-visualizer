@@ -14,26 +14,13 @@ struct node
 std::vector<node> Nodes;
 void drawCircle(sf::RenderWindow &window)
 {
-
-    sf::VertexArray lines(sf::LineStrip, 2);
-    lines[1].position = sf::Vector2f(200, 200);
-
     sf::CircleShape dot(5.f);
     dot.setFillColor(sf::Color::Blue);
     for (int i = 0; i < Nodes.size(); i++)
     {
         dot.setPosition(Nodes[i].x, Nodes[i].y);
-        lines[0].position = sf::Vector2f(Nodes[i].x, Nodes[i].y);
         window.draw(dot);
-        window.draw(lines);
     }
-}
-void centerCircle(sf::RenderWindow &window)
-{
-    sf::CircleShape dot(100.f);
-    dot.setFillColor(sf::Color(255, 255, 255));
-    dot.setPosition(sf::Vector2f(200, 200));
-    window.draw(dot);
 }
 int main()
 {
@@ -46,6 +33,7 @@ int main()
         {
             if (event.type == sf::Event::Closed)
             {
+                Nodes.clear();
                 window.close();
             }
             if (event.type == sf::Event::MouseButtonPressed &&
@@ -58,7 +46,6 @@ int main()
                 Nodes.push_back(*newNode);
             }
             window.clear();
-            centerCircle(window);
             drawCircle(window);
             window.display();
         }
