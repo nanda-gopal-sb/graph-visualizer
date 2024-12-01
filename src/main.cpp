@@ -1,9 +1,44 @@
 #include <SFML/Graphics.hpp>
+#include <iostream>
+#include <vector>
+struct node
+{
+    int x;
+    int y;
+    node(int _x, int _y)
+    {
+        x = _x;
+        y = _y;
+    }
+};
+std::vector<node> Nodes;
+void drawCircle(sf::RenderWindow &window)
+{
 
+    sf::VertexArray lines(sf::LineStrip, 2);
+    lines[1].position = sf::Vector2f(200, 200);
+
+    sf::CircleShape dot(5.f);
+    dot.setFillColor(sf::Color::Blue);
+    for (int i = 0; i < Nodes.size(); i++)
+    {
+        dot.setPosition(Nodes[i].x, Nodes[i].y);
+        lines[0].position = sf::Vector2f(Nodes[i].x, Nodes[i].y);
+        window.draw(dot);
+        window.draw(lines);
+    }
+}
+void centerCircle(sf::RenderWindow &window)
+{
+    sf::CircleShape dot(100.f);
+    dot.setFillColor(sf::Color(255, 255, 255));
+    dot.setPosition(sf::Vector2f(200, 200));
+    window.draw(dot);
+}
 int main()
 {
-    auto window = sf::RenderWindow({1920u, 1080u}, "CMake SFML Project");
-    window.setFramerateLimit(144);
+    auto window = sf::RenderWindow({600u, 600u}, "CMake SFML Project");
+    window.setFramerateLimit(60);
 
     while (window.isOpen())
     {
@@ -13,9 +48,19 @@ int main()
             {
                 window.close();
             }
-        }
+            if (event.type == sf::Event::MouseButtonPressed &&
+                event.mouseButton.button == sf::Mouse::Left)
+            {
 
-        window.clear();
-        window.display();
+                int mouse_x = sf::Mouse::getPosition(window).x;
+                int mouse_y = sf::Mouse::getPosition(window).y;
+                node *newNode = new node(mouse_x, mouse_y);
+                Nodes.push_back(*newNode);
+            }
+            window.clear();
+            centerCircle(window);
+            drawCircle(window);
+            window.display();
+        }
     }
 }
