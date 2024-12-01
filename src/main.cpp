@@ -15,17 +15,27 @@ std::vector<node> Nodes;
 void drawCircle(sf::RenderWindow &window)
 {
     sf::CircleShape dot(5.f);
+    sf::VertexArray connect(sf::Lines, 2);
     dot.setFillColor(sf::Color::Blue);
     for (int i = 0; i < Nodes.size(); i++)
     {
         dot.setPosition(Nodes[i].x, Nodes[i].y);
         window.draw(dot);
     }
+    if (Nodes.size() >= 1)
+    {
+        for (int i = 0; i < Nodes.size() - 1; i++)
+        {
+            connect[0].position = sf::Vector2f(Nodes[i].x, Nodes[i].y);
+            connect[1].position = sf::Vector2f(Nodes[i + 1].x, Nodes[i + 1].y);
+            window.draw(connect);
+        }
+    }
 }
 int main()
 {
-    auto window = sf::RenderWindow({600u, 600u}, "CMake SFML Project");
-    window.setFramerateLimit(60);
+    auto window = sf::RenderWindow({1000u, 1000u}, "graphs");
+    window.setFramerateLimit(144);
 
     while (window.isOpen())
     {
