@@ -12,6 +12,19 @@ struct node
     }
 };
 std::vector<node *> Nodes;
+
+bool checkClick(int x, int y)
+{
+    for (auto cell : Nodes)
+    {
+        if ((cell->x == x && cell->y == y))
+        {
+            std::cout << "lo\n";
+            return true;
+        }
+    }
+    return false;
+}
 void drawCircle(sf::RenderWindow &window)
 {
     sf::CircleShape dot(10.f);
@@ -60,6 +73,7 @@ int main()
 
                 int mouse_x = sf::Mouse::getPosition(window).x;
                 int mouse_y = sf::Mouse::getPosition(window).y;
+                std::cout << "l\n";
                 node *newNode = new node(mouse_x, mouse_y);
                 Nodes.push_back(newNode);
             }
