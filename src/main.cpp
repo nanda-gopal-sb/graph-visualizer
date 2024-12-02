@@ -11,26 +11,34 @@ struct node
         y = _y;
     }
 };
-std::vector<node> Nodes;
+std::vector<node *> Nodes;
 void drawCircle(sf::RenderWindow &window)
 {
-    sf::CircleShape dot(5.f);
+    sf::CircleShape dot(10.f);
     sf::VertexArray connect(sf::Lines, 2);
     dot.setFillColor(sf::Color::Blue);
-    for (int i = 0; i < Nodes.size(); i++)
-    {
-        dot.setPosition(Nodes[i].x, Nodes[i].y);
-        window.draw(dot);
-    }
     if (Nodes.size() >= 1)
     {
         for (int i = 0; i < Nodes.size() - 1; i++)
         {
-            connect[0].position = sf::Vector2f(Nodes[i].x, Nodes[i].y);
-            connect[1].position = sf::Vector2f(Nodes[i + 1].x, Nodes[i + 1].y);
+            connect[0].position = sf::Vector2f(Nodes[i]->x + 10, Nodes[i]->y + 10);
+            connect[1].position = sf::Vector2f(Nodes[i + 1]->x + 10, Nodes[i + 1]->y + 10);
             window.draw(connect);
         }
     }
+    for (int i = 0; i < Nodes.size(); i++)
+    {
+        dot.setPosition(Nodes[i]->x, Nodes[i]->y);
+        window.draw(dot);
+    }
+}
+void destroy()
+{
+    for (auto cell : Nodes)
+    {
+        delete (cell);
+    }
+    Nodes.clear();
 }
 int main()
 {
@@ -43,7 +51,7 @@ int main()
         {
             if (event.type == sf::Event::Closed)
             {
-                Nodes.clear();
+                destroy();
                 window.close();
             }
             if (event.type == sf::Event::MouseButtonPressed &&
@@ -53,7 +61,7 @@ int main()
                 int mouse_x = sf::Mouse::getPosition(window).x;
                 int mouse_y = sf::Mouse::getPosition(window).y;
                 node *newNode = new node(mouse_x, mouse_y);
-                Nodes.push_back(*newNode);
+                Nodes.push_back(newNode);
             }
             window.clear();
             drawCircle(window);
