@@ -5,13 +5,13 @@
 #include <vector>
 
 #define CELL_SIZE 80
-#define COLUMNS 5
-#define ROWS 5
+#define COLUMNS 8
+#define ROWS 8
 #define FONT_HEIGHT = 16
 
 struct Cell
 {
-    int number = 0;
+    int number = 1;
     int x;         // obvious
     int y;         // obvious
     bool open;     // this is when the player peeks
@@ -63,17 +63,20 @@ void fillNums()
 {
     std::random_device rd;
     std::mt19937 gen(rd());                         // seeding the number generator
-    std::uniform_int_distribution<> distrib(0, 24); // between 0 and 63(64) indices
+    std::uniform_int_distribution<> distrib(0, 63); // between 0 and 63(64) indices
     int rand = 0;
     std::vector<int> arr; // to keep track of the indices in the array
-    for (int i = 1; i <= ((ROWS * COLUMNS) - 1); i++)
+    for (int i = 1; i <= ((ROWS * COLUMNS) / 2); i++)
     {
-        while (isInArray(rand, arr)) // if the indices is already in the array run again
+        for (int j = 0; j < 2; j++)
         {
-            rand = distrib(gen);
+            while (isInArray(rand, arr)) // if the indices is already in the array run again
+            {
+                rand = distrib(gen);
+            }
+            arr.push_back(rand);
+            cells[rand].number = i; // puts the number 1 into a random position in the array
         }
-        arr.push_back(rand);
-        cells[rand].number = i; // puts the number 1 into a random position in the array
     }
 }
 
@@ -106,7 +109,7 @@ sf::Text DrawTextForBoard()
     {
         text.setFont(font);
         text.setCharacterSize(64);
-        text.setFillColor(sf::Color(56, 54, 54));
+        text.setFillColor(sf::Color(26, 127, 0));
     }
     return text;
 }
@@ -157,12 +160,60 @@ void drawBoard(sf::RenderWindow &window, bool win, bool close)
             text.setString(std::to_string(cells[i + COLUMNS * j].number)); // sets the string to that number assigned to cell
             cell_shape.setPosition(CELL_SIZE * i, CELL_SIZE * j);          // sets the position of the rectangle also
 
-            cell_shape.setFillColor(sf::Color(209, 115, 21));
-            window.draw(cell_shape);
-            if (cells[i + COLUMNS * j].number != 0)
+            if (!cells[i + COLUMNS * j].open) // if a cells is closed, ie usual state
+            {
+                cell_shape.setFillColor(sf::Color(73, 98, 185));
+                window.draw(cell_shape);
+            }
+
+            if (cells[i + COLUMNS * j].open)
+            {
+                cell_shape.setFillColor(sf::Color(255, 136, 0));
+                window.draw(cell_shape);
                 window.draw(text);
+            }
+            if (cells[i + COLUMNS * j].openPerm)
+            {
+                cell_shape.setFillColor(sf::Color(0, 0, 0));
+                window.draw(cell_shape);
+            }
         }
     }
+}
+bool checkIfCorrectAndClear()
+{
+    int count = 0;
+    int arr[2] = {0};
+    for (int i = 0; i < cells.size(); i++)
+    {
+        if (count == 2)
+            break;
+        if (cells[i].open)
+        {
+            arr[count] = i;
+            count++;
+        }
+    }
+    if (cells[arr[0]].number == cells[arr[1]].number)
+    {
+        cells[arr[0]].openPerm = true;
+        cells[arr[1]].openPerm = true;
+        cells[arr[0]].open = false;
+        cells[arr[1]].open = false;
+        return true;
+    }
+    else
+    {
+        cells[arr[0]].open = false;
+        cells[arr[1]].open = false;
+        return false;
+    }
+}
+void getMousPos(sf::RenderWindow &window)
+{
+    int mouse_x = sf::Mouse::getPosition(window).x / CELL_SIZE;
+    int mouse_y = sf::Mouse::getPosition(window).y / CELL_SIZE;
+    cells[mouse_x + mouse_y * COLUMNS].open = true;
 }
 int main()
 {
@@ -172,21 +223,41 @@ int main()
     bool win = false;
     bool close = false;
     fillCell();
-    sf::RenderWindow window = sf::RenderWindow({COLUMNS * 80, ROWS * 80}, "memory-match");
-    window.setFramerateLimit(144);
+    sf::RenderWindow window = sf::RenderWindow({640u, 640u}, "memory-match");
+    window.setFramerateLimit(60);
     sf::Clock clock;
     while (window.isOpen())
     {
         for (auto event = sf::Event(); window.pollEvent(event);)
         {
+            if (event.type == sf::Event::MouseButtonPressed &&
+                event.mouseButton.button == sf::Mouse::Left && !win)
+            {
+                clicks_num++;
+                if (opened == 2)
+                {
+                    opened = 0;
+                    checkIfCorrectAndClear();
+                    if (isWin())
+                    {
+                        win = true;
+                        std::cout << "WIn\n";
+                        elapsed1 = clock.getElapsedTime();
+                    }
+                    getMousPos(window);
+                    opened++;
+                }
+                else
+                {
+                    getMousPos(window);
+                    opened++;
+                }
+            }
             if (event.type == sf::Event::Closed)
             {
                 window.close();
                 close = true;
             }
-            if (event.type == sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            {
-                        }
         }
         window.clear();
         drawBoard(window, win, close);
