@@ -31,21 +31,7 @@ sf::Font font;           // the font, this needs to be gobal for some reason
 int clicks_num = 0;      // I need to use in a lot of functions
 sf::Time elapsed1;       // this variable for storing the time elapsed
 
-// to check for win
-bool isWin()
-{
-    bool win = true;
-    // runs a loop and checks for openPerm
-    for (Cell cell : cells)
-    {
-        if (!cell.openPerm)
-        {
-            return false;
-        }
-    }
-    return true;
-}
-
+// to check for wi
 // to check if the index is already accounted for
 bool isInArray(int num, std::vector<int> &arr)
 {
@@ -172,21 +158,34 @@ int main()
     bool win = false;
     bool close = false;
     fillCell();
-    sf::RenderWindow window = sf::RenderWindow({COLUMNS * 80, ROWS * 80}, "memory-match");
+    sf::RenderWindow window = sf::RenderWindow({COLUMNS * 80, ROWS * 80}, "puzzle");
     window.setFramerateLimit(144);
     sf::Clock clock;
     while (window.isOpen())
     {
         for (auto event = sf::Event(); window.pollEvent(event);)
         {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            {
+                std::cout << "pressed up\n";
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            {
+                std::cout << "pressed down\n";
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            {
+                std::cout << "pressed left\n";
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            {
+                std::cout << "pressed right\n";
+            }
             if (event.type == sf::Event::Closed)
             {
                 window.close();
                 close = true;
             }
-            if (event.type == sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            {
-                        }
         }
         window.clear();
         drawBoard(window, win, close);
