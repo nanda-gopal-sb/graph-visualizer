@@ -4,6 +4,8 @@ project(graph-visualizer LANGUAGES CXX)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
+include_directories(/usr/include/freetype2  -I/usr/local/include/freetype2  -I/usr/include/libpng16)
+
 include(FetchContent)
 FetchContent_Declare(SFML
     GIT_REPOSITORY https://github.com/SFML/SFML.git
