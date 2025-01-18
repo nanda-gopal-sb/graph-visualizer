@@ -9,6 +9,14 @@
 #define ROWS 5
 #define FONT_HEIGHT = 16
 
+enum dir
+{
+    left,
+    right,
+    up,
+    down
+};
+
 struct Cell
 {
     int number = 0;
@@ -60,6 +68,41 @@ void fillNums()
         }
         arr.push_back(rand);
         cells[rand].number = i; // puts the number 1 into a random position in the array
+    }
+}
+
+void move(dir lol)
+{
+    int emptySpaceLoc = 0;
+    int toSwapLoc = 0;
+    bool toSwitch = true;
+    for (int i = 0; i < ROWS; i++)
+    {
+        for (int j = 0; j < COLUMNS; j++)
+        {
+            if (cells[i + COLUMNS * j].number == 0)
+            {
+                if ((j + 1) < 0)
+                {
+                    toSwitch = false;
+                }
+                emptySpaceLoc = i + COLUMNS * j;
+                if (lol == down)
+                {
+                    toSwapLoc = i + COLUMNS * (j - 1);
+                }
+                else if (lol == up)
+                {
+                    toSwapLoc = i + COLUMNS * (j + 1);
+                }
+            }
+        }
+    }
+    if (toSwitch)
+    {
+        int temp = cells[emptySpaceLoc].number;
+        cells[emptySpaceLoc].number = cells[toSwapLoc].number;
+        cells[toSwapLoc].number = temp;
     }
 }
 
@@ -165,13 +208,15 @@ int main()
     {
         for (auto event = sf::Event(); window.pollEvent(event);)
         {
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            {
-                std::cout << "pressed up\n";
-            }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             {
+                std::cout << "pressed up\n";
+                move(down);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            {
                 std::cout << "pressed down\n";
+                move(up);
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             {
