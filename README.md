@@ -1,1 +1,1 @@
-## Work in Progress
+## Currently working on a obsidian graph represntation
