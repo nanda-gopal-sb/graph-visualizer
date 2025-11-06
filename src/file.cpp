@@ -32,9 +32,15 @@ void getFiles(std::string path)
 
 int main(int argc, char *argv[])
 {
+    std::string myText;
     getFiles(argv[1]);
     for (const std::string &filename : file_names)
     {
+        std::ifstream MyReadFile(filename);
         std::cout << filename << std::endl;
+        while (getline(MyReadFile, myText))
+        {
+            std::cout << myText << "\n";
+        }
     }
 }
