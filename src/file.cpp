@@ -5,6 +5,7 @@
 #include <fstream>
 #include <filesystem>
 #include <regex>
+#include <bits/stdc++.h>
 std::vector<std::string> file_names;
 using namespace std::filesystem;
 void getFiles(std::string path)
@@ -16,7 +17,7 @@ void getFiles(std::string path)
         {
             if (entry.path().filename().generic_string()[0] != '.')
             {
-                std::cout << "File: " << entry.path() << std::endl;
+                // std::cout << "File: " << entry.path() << std::endl;
                 if (is_directory(entry.path()))
                 {
                     getFiles(entry.path());
@@ -52,21 +53,21 @@ std::vector<std::string> findAllAnchorTags(const std::string &filename)
     }
     return results;
 }
-int main(int argc, char *argv[])
+int fileOps(int argc, char *argv[])
 {
     std::vector<std::string> anchors;
     std::regex re(R"(<a([\s]+[^>]*)>(.*?)</a>)", std::regex_constants::icase);
     std::string myText;
     getFiles(argv[1]);
-    std::cout << file_names.size();
     for (const std::string &filename : file_names)
     {
         std::ifstream MyReadFile(filename);
-        std::cout << filename << std::endl;
         anchors = findAllAnchorTags(filename);
         for (std::string x : anchors)
         {
-            std::cout << x << "\n";
+            auto it = std::find(x.begin(), x.end(), "=");
+            std::string lmao(x.begin(), it);
+            std::cout << lmao << "\n";
         }
     }
 }
